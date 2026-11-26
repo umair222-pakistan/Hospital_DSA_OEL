@@ -15,7 +15,7 @@ struct Appointment {
     // User se patient aur date leta hai.
     // Agar appointment na bane to ID 0 rehti hai aur status "Not made" hota hai.
     Appointment(PatientList& patients)
-        : id(0), patient(0, "N/A", "N/A", "N/A"), day(1), month(1), year(2000), status("Not made") {
+        : id(0), day(1), month(1), year(2000), status("Not made") {
 
         if (patients.count == 0) {
             cout << "No patients registered. Register a patient first.\n";
@@ -66,18 +66,10 @@ struct Appointment {
     Appointment(int i, Patient p, int d, int m, int y, string s)
         : id(i), patient(p), day(d), month(m), year(y), status(s) {}
 
-    static void header() {
-        cout << left << setw(6) << "ID" << setw(10) << "Patient"
-             << setw(22) << "Patient Name" << setw(18) << "Date"
-             << setw(12) << "Status" << "\n"
-             << string(68, '-') << "\n";
-    }
-
     void display() {
         string date = (day < 10 ? "0" : "") + to_string(day) + " " + months[month - 1] + " " + to_string(year);
-        cout << left << setw(6) << id << setw(10) << patient.id
-             << setw(22) << patient.name << setw(18) << date
-             << setw(12) << status << "\n";
+        cout << "ID: " << id << " | Patient: " << patient.id << " (" << patient.name << ")"
+             << " | Date: " << date << " | Status: " << status << "\n";
     }
 };
 
@@ -161,14 +153,12 @@ struct AppointmentQueue {
             cout << "The appointment queue is empty.\n";
             return;
         }
-        Appointment::header();
         for (AppointmentNode* cur = front; cur; cur = cur->next) cur->data.display();
     }
 
     bool displayById(int id) {
         for (AppointmentNode* cur = front; cur; cur = cur->next)
             if (cur->data.id == id) {
-                Appointment::header();
                 cur->data.display();
                 return true;
             }
@@ -179,7 +169,6 @@ struct AppointmentQueue {
         bool found = false;
         for (AppointmentNode* cur = front; cur; cur = cur->next)
             if (cur->data.status == s) {
-                if (!found) Appointment::header();
                 cur->data.display();
                 found = true;
             }
@@ -202,7 +191,6 @@ struct AppointmentQueue {
         bool found = false;
         for (AppointmentNode* cur = front; cur; cur = cur->next)
             if (cur->data.month == m && cur->data.year == year) {
-                if (!found) Appointment::header();
                 cur->data.display();
                 found = true;
             }
@@ -230,7 +218,6 @@ struct AppointmentQueue {
                 }
             }
 
-        Appointment::header();
         for (int k = 0; k < count; k++) arr[k]->display();
         delete[] arr;
     }
@@ -269,7 +256,11 @@ struct AppointmentQueue {
             int aid = atoi(id.c_str());
             int m = atoi(month.c_str());
             if (aid > 0 && m >= 1 && m <= 12) {
-                Patient p(atoi(pid.c_str()), name, city, phone);
+                Patient p;
+                p.id = atoi(pid.c_str());
+                p.name = name;
+                p.city = city;
+                p.phone = phone;
                 enqueue(Appointment(aid, p, atoi(day.c_str()), m, atoi(year.c_str()), status));
                 if (aid >= nextAppointmentId) nextAppointmentId = aid + 1;
             }

@@ -11,7 +11,7 @@ int main() {
     appointments.load();
 
     while (choice != 0) {
-        cout << "\n===== Hospital Medical Complex =====\n"
+        cout << "\n===== Naveed Medical Complex =====\n"
              << "  1. Register patient\n"
              << "  2. View all patients\n"
              << "  3. View patient by ID\n"
@@ -51,8 +51,10 @@ int main() {
 
         if (choice == 1) {
             Patient p;
-            patients.add(p);
-            cout << "Patient registered. Patient ID: " << p.id << "\n";
+            if (patients.input(p)) {      // false = pehle se registered, message dikh gaya
+                patients.add(p);
+                cout << "Patient registered. Patient ID: " << p.id << "\n";
+            }
         }
         else if (choice == 2) patients.displayAll();
         else if (choice == 3) {
